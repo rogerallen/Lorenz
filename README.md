@@ -3,6 +3,9 @@
 A Processing 2.0 sketch that simulates the Lorenz system via lower-level
 OpenGL calls to enable an interactive camera.
 
+![Screenshot](https://github.com/rogerallen/Lorenz/raw/master/screen.png)
+
+
 ## Usage
 
 Open Lorenz.pde in Processing 2.0
