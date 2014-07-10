@@ -24,7 +24,7 @@ float[] p2 = new float[] {12.02, 12.06, 12.04, 1};
 // config parameters
 final float   S = 10.0, R = 28.0, B = 8.0/3; // Lorenz constants
 final int     N = 10000; // keep N points of history
-final int     SIM_STEPS_PER_FRAME = 12;
+final int     SIM_STEPS_PER_FRAME = 2;
 final boolean SHOW_SECOND_POINT = true;
 
 // global vars
