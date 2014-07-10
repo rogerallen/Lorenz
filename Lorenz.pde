@@ -21,31 +21,31 @@ import java.nio.*;
 // simultate these 2 points in a Lorenz system
 float[] p  = new float[] {12.01, 12.05, 12.03, 1};
 float[] p2 = new float[] {12.02, 12.06, 12.04, 1};
-// Lorenz constants
-final float S = 10.0, R = 28.0, B = 8.0/3;
-// keep 10,000 points of history
-final int N = 10000;
-final int SIM_STEPS_PER_FRAME = 2;
+// config parameters
+final float   S = 10.0, R = 28.0, B = 8.0/3; // Lorenz constants
+final int     N = 10000; // keep N points of history
+final int     SIM_STEPS_PER_FRAME = 12;
 final boolean SHOW_SECOND_POINT = true;
 
 // global vars
-PGL pgl;
-PShader coloredLineShader;
-Arcball arcball;
+PGL             pgl;
+PShader         coloredLineShader;
+Arcball         arcball;
 FloatFifoBuffer vertData, vertData2;
 FloatFifoBuffer colorData, colorData2;
 
 void setup() {
   size(1280, 720, P3D);
-  smooth(8);
+  smooth(8); // you may need to adjust downward
+  
   arcball = new Arcball(width/2, height/2, 600);
 
   coloredLineShader = loadShader("frag.glsl", "vert.glsl");
 
   float[] vertices = new float[4*N];
   for (int i = 0; i < N; i++) {
-    vertices[4*i+0] = 0;//100*cos((float)(2*Math.PI*i/(N)));
-    vertices[4*i+1] = 0;//100*sin((float)(2*Math.PI*i/(N)));
+    vertices[4*i+0] = 0;
+    vertices[4*i+1] = 0;
     vertices[4*i+2] = 0;
     vertices[4*i+3] = 1;
   }
@@ -94,16 +94,16 @@ void drawColoredLine(FloatFifoBuffer vData, FloatFifoBuffer cData) {
   pgl.enableVertexAttribArray(vertLoc);
   pgl.enableVertexAttribArray(colorLoc);
 
-  int K = vData.curStartOffset();
+  int k = vData.getOldestVectorIndex();
   // trick: offset K will read color data from start of gradient
-  cData.getBuffer().position(N*4-K*4);
+  cData.setPositionVectorIndex(N-k);
   pgl.vertexAttribPointer(vertLoc, 4, PGL.FLOAT, false, 0, vData.getBuffer());
   pgl.vertexAttribPointer(colorLoc, 4, PGL.FLOAT, false, 0, cData.getBuffer());
-  if (K==0) {
+  if(k==0) {
     pgl.drawArrays(PGL.LINE_STRIP, 0, N-1);
   } else {
-    pgl.drawArrays(PGL.LINE_STRIP, K, N-K+1);
-    pgl.drawArrays(PGL.LINE_STRIP, 0, K-1);
+    pgl.drawArrays(PGL.LINE_STRIP, k, N-k+1);
+    pgl.drawArrays(PGL.LINE_STRIP, 0, k-1);
   }
 
   pgl.disableVertexAttribArray(vertLoc);

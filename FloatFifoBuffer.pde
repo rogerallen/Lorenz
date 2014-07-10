@@ -1,5 +1,5 @@
 // FifoFloatBuffer - a buffer of fixed size you can append to and
-// oldest data will be forgotten.
+// oldest data will be forgotten.  Written for OpenGL vertex data.
 //
 // Copyright © 2014 Roger Allen
 //
@@ -21,9 +21,14 @@ class FloatFifoBuffer {
   int _vector_size;
   int _wr_ptr;
   int _size;
-  // initialize with data & copy 0th vector.
+
+  // initialize with data to set the size of the buffer and the 
+  // size of the vector.
+  // Internally, we copy the 1st data vector and append it onto the end
+  // of the data in order to allow for pretending to "wrap".  So, the 
+  // buffer is actually data.length + vector_size, but externally it 
+  // should be considered data.length in size.
   FloatFifoBuffer(float[] data, int vector_size) {
-    println("SIZE", data.length);
     _size = data.length;
     int _size1 = _size + vector_size; // actual capacity of the buffer
     _vector_size = vector_size;
@@ -34,9 +39,14 @@ class FloatFifoBuffer {
     _data.put(data, 0, vector_size);  // repeat the 0th entries
     _data.position(0);
   }
+
+  // Give OpenGL access to the buffer.
   FloatBuffer getBuffer() {
     return _data;
   }
+
+  // Push a vector of data to the index of the _wr_ptr.  Handle the special case
+  // when the index is 0.  
   void push(float[] data) {
     assert(data.length == _vector_size);
     //print("write",_wr_ptr);
@@ -51,9 +61,18 @@ class FloatFifoBuffer {
     _wr_ptr %= _size;
     _data.position(0);
   }
-  int curStartOffset() {
+
+  // find out where the oldest vector is in order to draw geometry from that point onwards
+  int getOldestVectorIndex() {
     int v = _wr_ptr + _vector_size; // next entry
     v %= _size;
     return v/_vector_size;
   }
+  
+  // set the position to vector index v in order to draw geometry from that point onwards
+  void setPositionVectorIndex(int v) {
+    _data.position(v*_vector_size);
+  }
+  
 };
+
