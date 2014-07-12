@@ -64,8 +64,13 @@ class FloatFifoBuffer {
 
   // find out where the oldest vector is in order to draw geometry from that point onwards
   int getOldestVectorIndex() {
-    int v = _wr_ptr + _vector_size; // next entry
-    v %= _size;
+    return _wr_ptr/_vector_size; // next entry
+  }
+  int getNthNewestVectorIndex(int n) {
+    int v = _wr_ptr - n*_vector_size;
+    if(v < 0) {
+      v += _size;
+    }
     return v/_vector_size;
   }
   
