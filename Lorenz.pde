@@ -91,7 +91,7 @@ void setup() {
 void lorenz(float[] pt) {
   float dt = 1.0/200;
   if (FLYING_CAMERA) {
-    dt = 1.0/1200;  // go slower so we don't get sick
+    dt = 1.0/800;  // go slower so we don't get sick
   }
   float dx = S * (pt[1] - pt[0]) * dt;
   float dy = (pt[0] * (R - pt[2]) - pt[1]) * dt;
@@ -143,11 +143,11 @@ void draw() {
     scale(9.0);
     arcball.run();
   } else {
-    int i0 = 4*vertData.getNthNewestVectorIndex(51);
-    int i1 = 4*vertData.getNthNewestVectorIndex(52);
+    int i0 = 4*vertData.getNthNewestVectorIndex(1);
+    int i1 = 4*vertData.getNthNewestVectorIndex(256);
     FloatBuffer d = vertData.getBuffer();
     camera(
-      d.get(i1), d.get(i1+1), d.get(i1+2), // eye
+      d.get(i1), d.get(i1+1) - 0.2, d.get(i1+2), // eye
       d.get(i0), d.get(i0+1), d.get(i0+2), // lookat
       0, 1, 0                              // up
     );
